@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OLOIKA WIFI Portal</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                <line x1="12" y1="20" x2="12.01" y2="20"></line>
+            </svg>
+            OLOIKA WIFI
+        </h1>
+        <div class="header-center">
+            <p>Ultra Fast, Cheap and Reliable WiFi.</p>
+            <div class="contact-info">Helpline: 0769599129</div>
+        </div>
+        <div class="header-right">
+            <a href="#login-section">Already Paid? Click Here.</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="section-title">
+            <h2>CHECK OUR PRICING</h2>
+            <p>Choose a plan that fits your needs.</p>
+        </section>
+
+        <div class="pricing-grid">
+            <!-- Pricing Cards -->
+            <div class="plan-card"><div><div class="plan-name">500MB 1HR</div><div class="plan-price">ksh5</div><div class="plan-duration">1 Hrs Limited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">UNLIMITED 1HR</div><div class="plan-price">ksh10</div><div class="plan-duration">1 Hrs Unlimited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">1GB DAILY</div><div class="plan-price">ksh20</div><div class="plan-duration">1 Day Limited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">2GB DAILY</div><div class="plan-price">ksh30</div><div class="plan-duration">1 Day Limited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">UNLIMITED 24HRS</div><div class="plan-price">ksh35</div><div class="plan-duration">1 Days Unlimited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">2GB WEEKLY</div><div class="plan-price">ksh50</div><div class="plan-duration">7 Days Limited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">5GB WEEKLY</div><div class="plan-price">ksh100</div><div class="plan-duration">7 Days Limited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">UNLIMITED 1 WEEK</div><div class="plan-price">ksh200</div><div class="plan-duration">7 Days Unlimited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">30GB MONTHLY</div><div class="plan-price">ksh450</div><div class="plan-duration">1 Month Limited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+            <div class="plan-card"><div><div class="plan-name">UNLIMITED 1 MONTH</div><div class="plan-price">ksh700</div><div class="plan-duration">1 Month Unlimited</div></div><button class="btn btn-primary">Click Here To Connect</button></div>
+        </div>
+
+        <div class="forms-grid">
+            <!-- Login -->
+            <div class="form-box" id="login-section">
+                <h3>Already Have an Active Package?</h3>
+                <form>
+                    <div class="form-group"><label>Phone Number or Voucher Code</label><input type="text" class="form-control" placeholder="Enter your phone number or voucher code"></div>
+                    <div class="form-group"><label>Password (Optional)</label><input type="password" class="form-control" placeholder="Enter password if required"></div>
+                    <button type="submit" class="btn btn-success">Click Here To Connect</button>
+                </form>
+            </div>
+
+            <!-- Mpesa -->
+            <div class="form-box">
+                <h3>Enter Your Mpesa Message</h3>
+                <form>
+                    <div class="form-group"><label>Mpesa Message</label><textarea class="form-control" placeholder="Paste your full Mpesa confirmation message here..."></textarea></div>
+                    <button type="submit" class="btn btn-primary">Submit Mpesa Message</button>
+                </form>
+            </div>
+
+            <!-- Voucher Activation -->
+            <div class="form-box">
+                <h3>Have a voucher code?</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-top: -10px; margin-bottom: 15px;">Activate your voucher code here</p>
+                <form>
+                    <div class="form-group"><label>Voucher Code</label><input type="text" class="form-control" placeholder="e.g., OLOIKA-A7B3C9D2"></div>
+                    <div class="form-group"><label>Phone Number</label><input type="tel" class="form-control" placeholder="e.g., 0769599129"></div>
+                    <button type="submit" class="btn btn-primary">Activate Voucher</button>
+                </form>
+            </div>
+
+            <!-- Reconnect -->
+            <div class="form-box">
+                <h3>Lost Voucher connection?</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-top: -10px; margin-bottom: 15px;">Reconnect here</p>
+                <form>
+                    <div class="form-group"><label>Phone Number or Voucher Code</label><input type="text" class="form-control" placeholder="Enter phone number or voucher code"></div>
+                    <button type="submit" class="btn btn-secondary">Reconnect</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 OLOIKA WIFI. All rights reserved.</p>
+        <p>Powered by netmart.com</p>
+    </footer>
+</body>
+</html>
