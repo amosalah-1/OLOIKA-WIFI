@@ -182,6 +182,15 @@ body {
     border-radius: 999px;
 }
 
+.plan-card.featured .plan-top {
+    position: relative;
+    padding-top: 28px;
+}
+
+.plan-card.featured .plan-name {
+    margin-top: 10px;
+}
+
 .plan-top {
     min-height: 220px;
     padding: 28px 16px 14px;
@@ -413,6 +422,10 @@ footer {
         max-width: 110px;
     }
 
+    .header-center {
+        justify-self: center;
+    }
+
     .header-right {
         font-size: 0.92rem;
         white-space: nowrap;
@@ -483,6 +496,10 @@ footer {
         padding: 16px 8px 10px;
     }
 
+    .plan-card.featured .plan-top {
+        padding-top: 28px;
+    }
+
     .plan-name {
         font-size: 0.72rem;
         padding: 7px 10px;
@@ -526,22 +543,24 @@ footer {
 
 @media (max-width: 380px) {
     .portal-header {
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "brand phone"
-            "link link";
+        grid-template-columns: 1fr 1fr auto;
+        align-items: center;
     }
 
     .portal-header h1 {
-        grid-area: brand;
+        max-width: 105px;
     }
 
     .header-center {
-        grid-area: link;
+        justify-self: center;
+    }
+
+    .portal-header a {
+        text-align: center;
+        max-width: 96px;
     }
 
     .header-right {
-        grid-area: phone;
         justify-self: end;
     }
 
