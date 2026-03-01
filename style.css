@@ -282,40 +282,115 @@ footer {
 
 @media (max-width: 900px) {
     .portal-header {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1.1fr 1fr auto;
         text-align: left;
-        padding: 15px 20px;
+        padding: 18px 16px;
+        gap: 10px;
     }
 
     .portal-header h1 {
         justify-content: flex-start;
-        font-size: 1.5rem;
+        font-size: 1.15rem;
+        line-height: 1.2;
+        max-width: 130px;
+        flex-wrap: wrap;
     }
 
     .portal-header h1 svg {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 
     .portal-header a {
-        font-size: 1rem;
+        font-size: 0.78rem;
+        line-height: 1.3;
+        max-width: 90px;
     }
 
     .header-right {
-        font-size: 1.1rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
     }
 }
 
 @media (max-width: 600px) {
-    .pricing-grid {
-        grid-template-columns: 1fr;
+    .top-strip {
+        padding: 12px 14px 14px;
     }
 
-    .plan-price {
+    .top-title {
+        font-size: 1.7rem;
+    }
+
+    .top-sub {
+        font-size: 1.35rem;
+    }
+
+    .container {
+        padding: 0 0 30px;
+    }
+
+    .hero h2 {
+        margin: 14px 0 48px;
+        padding: 0 16px;
+        font-size: 2.95rem;
+    }
+
+    .section-title {
+        margin-bottom: 90px;
+        padding: 0 16px;
+    }
+
+    .section-title h3 {
         font-size: 3rem;
     }
 
+    .section-title p {
+        font-size: 1.7rem;
+        margin-top: 22px;
+    }
+
+    .pricing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        padding: 0;
+    }
+
+    .plan-card {
+        border-radius: 10px;
+    }
+
+    .plan-top {
+        min-height: 210px;
+        padding: 22px 10px 12px;
+    }
+
+    .plan-name {
+        font-size: 0.9rem;
+        padding: 8px 14px;
+    }
+
+    .plan-price {
+        font-size: 3.1rem;
+        margin-top: 20px;
+    }
+
     .plan-duration {
-        font-size: 1.2rem;
+        font-size: 0.95rem;
+    }
+
+    .plan-bottom {
+        padding: 18px 10px 20px;
+    }
+
+    .plan-bottom .btn {
+        font-size: 0.58rem;
+        padding: 11px 6px;
+        border-radius: 12px;
+    }
+
+    .forms-grid {
+        grid-template-columns: 1fr;
+        padding: 0 12px;
     }
 }
