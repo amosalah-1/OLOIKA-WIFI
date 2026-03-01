@@ -1,12 +1,12 @@
 :root {
     --primary-color: #007bff;
-    --primary-dark: #0057b388;
+    --primary-dark: #0056b3;
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --bg-color: #f4f7f6;
     --card-bg: #ffffff;
     --text-color: #11172f;
-    --top-strip: #003a777a;
+    --top-strip: #003a77;
     --header-tint: #d8ecff;
     --card-top: #e7f1ff;
 }
@@ -20,6 +20,7 @@ body {
     font-family: "DM Sans", "Segoe UI", Tahoma, sans-serif;
     background: var(--bg-color);
     color: var(--text-color);
+    scroll-behavior: smooth;
 }
 
 .top-strip {
@@ -61,6 +62,7 @@ body {
     top: 0;
     z-index: 1000;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(2px);
 }
 
 .portal-header h1 {
@@ -92,13 +94,37 @@ body {
     max-width: 1080px;
     margin: 0 auto;
     padding: 0 18px 30px;
+    animation: fadeInUp 0.45s ease-out;
 }
 
 .hero h2 {
-    font-size: 48px;
+    font-size: 18px;
     line-height: 1.08;
     margin: 18px 0 52px;
     letter-spacing: -0.8px;
+}
+
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.quick-btn {
+    text-decoration: none;
+    color: #fff;
+    background: var(--primary-dark);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quick-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
 }
 
 .section-title {
@@ -130,6 +156,30 @@ body {
     overflow: hidden;
     background: var(--card-top);
     box-shadow: 0 8px 18px rgba(0, 44, 96, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plan-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 44, 96, 0.16);
+}
+
+.plan-card.featured {
+    border: 2px solid var(--primary-color);
+    position: relative;
+}
+
+.plan-card.featured::before {
+    content: "Best Value";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--success-color);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 999px;
 }
 
 .plan-top {
@@ -164,7 +214,7 @@ body {
 }
 
 .plan-duration {
-    color: #3550794f;
+    color: #355079;
     font-size: 1.45rem;
 }
 
@@ -183,11 +233,17 @@ body {
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease;
 }
 
 .plan-bottom .btn {
-    background: #fff;
+    background: #cfe6ff;
     color: var(--primary-dark);
+}
+
+.plan-bottom .btn:hover {
+    background: #b7d8ff;
+    color: #003f87;
 }
 
 .btn-primary {
@@ -207,6 +263,7 @@ body {
 
 .btn-success:hover {
     background-color: #218838;
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -216,6 +273,7 @@ body {
 
 .btn-secondary:hover {
     background-color: #5a6268;
+    transform: translateY(-2px);
 }
 
 .forms-grid {
@@ -267,6 +325,7 @@ body {
 .form-control:focus {
     border-color: var(--primary-color);
     outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.16);
 }
 
 textarea.form-control {
@@ -282,6 +341,49 @@ footer {
     font-size: 0.9rem;
     border-top: 1px solid #e3e7ec;
     background: #fff;
+}
+
+.back-to-top {
+    position: fixed;
+    right: 14px;
+    bottom: 16px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--primary-dark);
+    color: #fff;
+    font-weight: 700;
+    padding: 10px 12px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1100;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.btn:focus-visible,
+.quick-btn:focus-visible,
+.back-to-top:focus-visible,
+.portal-header a:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.95);
+    outline-offset: 2px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 900px) {
@@ -314,6 +416,11 @@ footer {
     .header-right {
         font-size: 0.8rem;
         white-space: nowrap;
+    }
+
+    .quick-btn {
+        font-size: 0.8rem;
+        padding: 8px 12px;
     }
 }
 
@@ -396,5 +503,15 @@ footer {
     .forms-grid {
         grid-template-columns: 1fr;
         padding: 0 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
     }
 }
