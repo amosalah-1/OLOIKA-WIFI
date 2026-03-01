@@ -57,6 +57,10 @@ body {
     grid-template-columns: 1.2fr 1fr auto;
     gap: 16px;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
 }
 
 .portal-header h1 {
