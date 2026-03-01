@@ -95,7 +95,7 @@ body {
 }
 
 .hero h2 {
-    font-size: clamp(2rem, 4.9vw, 3.6rem);
+    font-size: 18px;
     line-height: 1.08;
     margin: 18px 0 52px;
     letter-spacing: -0.8px;
@@ -337,7 +337,7 @@ footer {
     .hero h2 {
         margin: 14px 0 48px;
         padding: 0 16px;
-        font-size: 2.95rem;
+        font-size: 18px;
     }
 
     .section-title {
