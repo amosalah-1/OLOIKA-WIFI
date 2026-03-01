@@ -1,12 +1,12 @@
 :root {
     --primary-color: #007bff;
-    --primary-dark: #0056b3;
+    --primary-dark: #0057b388;
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --bg-color: #f4f7f6;
     --card-bg: #ffffff;
     --text-color: #11172f;
-    --top-strip: #003a77;
+    --top-strip: #003a777a;
     --header-tint: #d8ecff;
     --card-top: #e7f1ff;
 }
@@ -72,6 +72,11 @@ body {
     text-decoration: none;
     font-size: 1.45rem;
     font-weight: 600;
+}
+
+.portal-header a:hover {
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 .header-right {
@@ -155,7 +160,7 @@ body {
 }
 
 .plan-duration {
-    color: #355079;
+    color: #3550794f;
     font-size: 1.45rem;
 }
 
@@ -188,6 +193,7 @@ body {
 
 .btn-primary:hover {
     background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
 .btn-success {
@@ -277,19 +283,26 @@ footer {
 @media (max-width: 900px) {
     .portal-header {
         grid-template-columns: 1fr;
-        text-align: center;
+        text-align: left;
+        padding: 15px 20px;
     }
 
     .portal-header h1 {
-        justify-content: center;
+        justify-content: flex-start;
+        font-size: 1.5rem;
+    }
+
+    .portal-header h1 svg {
+        width: 28px;
+        height: 28px;
     }
 
     .portal-header a {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .header-right {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
     }
 }
 
