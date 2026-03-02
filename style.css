@@ -337,6 +337,88 @@ body {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.16);
 }
 
+.payment-modal {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 1200;
+}
+
+.payment-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.payment-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 22, 52, 0.56);
+    backdrop-filter: blur(2px);
+}
+
+.payment-modal__card {
+    position: relative;
+    width: min(100%, 430px);
+    border-radius: 18px;
+    padding: 22px;
+    background: linear-gradient(155deg, #f2f8ff 0%, #d8ebff 32%, #007bff 100%);
+    color: #052f64;
+    box-shadow: 0 22px 44px rgba(0, 33, 81, 0.36);
+    animation: fadeInUp 0.25s ease;
+}
+
+.payment-modal__head h4 {
+    margin: 8px 0 6px;
+    color: #ffffff;
+    font-size: 1.55rem;
+}
+
+.payment-modal__head p {
+    margin: 0 0 14px;
+    color: #e8f3ff;
+    font-weight: 600;
+}
+
+.payment-modal__tag {
+    margin: 0;
+    display: inline-block;
+    background: rgba(0, 46, 99, 0.88);
+    color: #d6eaff;
+    border: 1px solid rgba(255, 255, 255, 0.23);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+.payment-modal .form-group label {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.payment-modal .form-control {
+    border-color: #c4dcff;
+    background: #ffffff;
+}
+
+.payment-modal__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.payment-modal__actions .btn {
+    border-radius: 12px;
+    font-size: 1rem;
+}
+
 textarea.form-control {
     resize: vertical;
     min-height: 84px;
@@ -538,6 +620,23 @@ footer {
     .form-control {
         padding: 10px;
         font-size: 0.95rem;
+    }
+
+    .payment-modal {
+        padding: 14px;
+    }
+
+    .payment-modal__card {
+        border-radius: 14px;
+        padding: 18px 14px;
+    }
+
+    .payment-modal__head h4 {
+        font-size: 1.2rem;
+    }
+
+    .payment-modal__actions {
+        grid-template-columns: 1fr;
     }
 }
 

@@ -100,6 +100,27 @@
         </section>
     </main>
 
+    <div class="payment-modal" id="paymentModal" aria-hidden="true">
+        <div class="payment-modal__backdrop" data-close-payment-modal></div>
+        <div class="payment-modal__card" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+            <div class="payment-modal__head">
+                <p class="payment-modal__tag">M-PESA PAYMENT</p>
+                <h4 id="paymentModalTitle">Complete Your Purchase</h4>
+                <p id="paymentModalPlanText">Selected plan details will appear here.</p>
+            </div>
+            <form id="paymentPhoneForm">
+                <div class="form-group">
+                    <label for="paymentPhoneInput">Phone Number</label>
+                    <input id="paymentPhoneInput" type="tel" class="form-control" placeholder="e.g. 07XXXXXXXX" inputmode="tel" autocomplete="tel" required>
+                </div>
+                <div class="payment-modal__actions">
+                    <button type="button" class="btn btn-secondary" id="cancelPaymentBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send STK Push</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2026 OLOIKA WIFI. All rights reserved.</p>
         <p>&copy; Designed by Amosalah</p>
@@ -109,6 +130,12 @@
         const API_BASE_URL = "http://localhost:5000";
         const backToTop = document.getElementById("backToTop");
         const paymentStatusText = document.getElementById("paymentStatusText");
+        const paymentModal = document.getElementById("paymentModal");
+        const paymentModalPlanText = document.getElementById("paymentModalPlanText");
+        const paymentPhoneForm = document.getElementById("paymentPhoneForm");
+        const paymentPhoneInput = document.getElementById("paymentPhoneInput");
+        const cancelPaymentBtn = document.getElementById("cancelPaymentBtn");
+        let selectedPlan = null;
 
         function formatPlanId(planName) {
             return planName
@@ -156,21 +183,34 @@
             paymentStatusText.textContent = "Still waiting for payment confirmation. If already paid, try again in a moment.";
         }
 
-        async function initiatePlanPayment(planCard) {
+        function openPaymentModal(planCard) {
             const planName = planCard.querySelector(".plan-name")?.textContent?.replace(",", "").trim() || "OLOIKA_WIFI";
             const amount = extractPlanAmount(planCard);
             const planId = formatPlanId(planName);
 
-            const phoneInput = window.prompt(`Enter M-Pesa number for ${planName} (e.g. 07XXXXXXXX):`);
-            if (!phoneInput) return;
+            selectedPlan = { planName, amount, planId };
+            paymentModalPlanText.textContent = `${planName} - KES ${amount}`;
+            paymentPhoneInput.value = "";
+            paymentModal.classList.add("show");
+            paymentModal.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+            paymentPhoneInput.focus();
+        }
 
+        function closePaymentModal() {
+            paymentModal.classList.remove("show");
+            paymentModal.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        }
+
+        async function initiatePlanPayment(plan, phoneInput) {
             const normalizedPhone = normalizePhone(phoneInput);
             if (!normalizedPhone) {
                 paymentStatusText.textContent = "Invalid phone number. Use 07XXXXXXXX or 2547XXXXXXXX.";
                 return;
             }
 
-            paymentStatusText.textContent = `Sending M-Pesa prompt to ${normalizedPhone} for KES ${amount}...`;
+            paymentStatusText.textContent = `Sending M-Pesa prompt to ${normalizedPhone} for KES ${plan.amount}...`;
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/mpesa/stkpush`, {
@@ -178,10 +218,10 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         phone: normalizedPhone,
-                        amount,
-                        accountReference: planName,
-                        transactionDesc: `${planName} WiFi package`,
-                        planId
+                        amount: plan.amount,
+                        accountReference: plan.planName,
+                        transactionDesc: `${plan.planName} WiFi package`,
+                        planId: plan.planId
                     })
                 });
 
@@ -206,8 +246,28 @@
             button.addEventListener("click", (event) => {
                 event.preventDefault();
                 const planCard = button.closest(".plan-card");
-                if (planCard) initiatePlanPayment(planCard);
+                if (planCard) openPaymentModal(planCard);
             });
+        });
+
+        paymentPhoneForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (!selectedPlan) return;
+            const phone = paymentPhoneInput.value.trim();
+            closePaymentModal();
+            initiatePlanPayment(selectedPlan, phone);
+        });
+
+        cancelPaymentBtn.addEventListener("click", closePaymentModal);
+        paymentModal.addEventListener("click", (event) => {
+            if (event.target.hasAttribute("data-close-payment-modal")) {
+                closePaymentModal();
+            }
+        });
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && paymentModal.classList.contains("show")) {
+                closePaymentModal();
+            }
         });
 
         window.addEventListener("scroll", () => {
