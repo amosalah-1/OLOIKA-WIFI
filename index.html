@@ -56,6 +56,11 @@
             <article class="plan-card"><div class="plan-top"><div class="plan-name">UNLIMITED 1 MONTH,</div><div class="plan-price"><span>ksh</span>700</div><div class="plan-duration">1 Month Unlimited</div></div><div class="plan-bottom"><button class="btn btn-primary">Click Here To Connect</button></div></article>
         </section>
 
+        <section class="section-title">
+            <h3>PAYMENT STATUS</h3>
+            <p id="paymentStatusText">Select a plan and enter your phone number to receive an M-Pesa prompt.</p>
+        </section>
+
         <section class="forms-grid">
             <div class="form-box" id="login-section">
                 <h4>Already Have an Active Package?</h4>
@@ -101,7 +106,110 @@
     </footer>
     <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top">Top</button>
     <script>
+        const API_BASE_URL = "http://localhost:5000";
         const backToTop = document.getElementById("backToTop");
+        const paymentStatusText = document.getElementById("paymentStatusText");
+
+        function formatPlanId(planName) {
+            return planName
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "_")
+                .replace(/^_+|_+$/g, "");
+        }
+
+        function extractPlanAmount(planCard) {
+            const rawPrice = planCard.querySelector(".plan-price")?.textContent || "";
+            const amount = Number(rawPrice.replace(/[^\d]/g, ""));
+            return Number.isFinite(amount) ? amount : 0;
+        }
+
+        function normalizePhone(phone) {
+            const digits = String(phone || "").replace(/\D/g, "");
+            if (digits.startsWith("254") && digits.length === 12) return digits;
+            if (digits.startsWith("07") && digits.length === 10) return `254${digits.slice(1)}`;
+            if (digits.startsWith("7") && digits.length === 9) return `254${digits}`;
+            return null;
+        }
+
+        async function checkPaymentStatus(checkoutRequestId) {
+            for (let i = 0; i < 20; i += 1) {
+                await new Promise((resolve) => setTimeout(resolve, 4000));
+
+                const response = await fetch(`${API_BASE_URL}/api/mpesa/status/${checkoutRequestId}`);
+                if (!response.ok) continue;
+
+                const result = await response.json();
+                const payment = result.payment;
+                if (!payment) continue;
+
+                if (payment.status === "SUCCESS") {
+                    paymentStatusText.textContent = `Payment confirmed. Receipt: ${payment.mpesaReceiptNumber || "N/A"}. You can now connect.`;
+                    return;
+                }
+
+                if (payment.status === "FAILED") {
+                    paymentStatusText.textContent = `Payment failed: ${payment.resultDesc || "Request was not completed."}`;
+                    return;
+                }
+            }
+
+            paymentStatusText.textContent = "Still waiting for payment confirmation. If already paid, try again in a moment.";
+        }
+
+        async function initiatePlanPayment(planCard) {
+            const planName = planCard.querySelector(".plan-name")?.textContent?.replace(",", "").trim() || "OLOIKA_WIFI";
+            const amount = extractPlanAmount(planCard);
+            const planId = formatPlanId(planName);
+
+            const phoneInput = window.prompt(`Enter M-Pesa number for ${planName} (e.g. 07XXXXXXXX):`);
+            if (!phoneInput) return;
+
+            const normalizedPhone = normalizePhone(phoneInput);
+            if (!normalizedPhone) {
+                paymentStatusText.textContent = "Invalid phone number. Use 07XXXXXXXX or 2547XXXXXXXX.";
+                return;
+            }
+
+            paymentStatusText.textContent = `Sending M-Pesa prompt to ${normalizedPhone} for KES ${amount}...`;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/mpesa/stkpush`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        phone: normalizedPhone,
+                        amount,
+                        accountReference: planName,
+                        transactionDesc: `${planName} WiFi package`,
+                        planId
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok || !result.ok) {
+                    paymentStatusText.textContent = `Payment request failed: ${result.message || "Unable to start STK push."}`;
+                    return;
+                }
+
+                const checkoutRequestId = result.data?.CheckoutRequestID;
+                paymentStatusText.textContent = "Prompt sent. Check your phone and enter your M-Pesa PIN.";
+
+                if (checkoutRequestId) {
+                    checkPaymentStatus(checkoutRequestId);
+                }
+            } catch (error) {
+                paymentStatusText.textContent = "Cannot reach payment server. Ensure backend is running on port 5000.";
+            }
+        }
+
+        document.querySelectorAll("#pricing-section .plan-card .btn.btn-primary").forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                const planCard = button.closest(".plan-card");
+                if (planCard) initiatePlanPayment(planCard);
+            });
+        });
+
         window.addEventListener("scroll", () => {
             backToTop.classList.toggle("show", window.scrollY > 260);
         });
