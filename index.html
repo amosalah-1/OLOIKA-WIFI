@@ -64,7 +64,7 @@
         <section class="forms-grid">
             <div class="form-box" id="login-section">
                 <h4>Already Have an Active Package?</h4>
-                <form>
+                <form id="activePackageForm">
                     <div class="form-group"><label>Phone Number or Voucher Code</label><input type="text" class="form-control" placeholder="Enter your phone number or voucher code" autocomplete="username" required></div>
                     <div class="form-group"><label>Password (Optional)</label><input type="password" class="form-control" placeholder="Enter password if required" autocomplete="current-password"></div>
                     <button type="submit" class="btn btn-success">Click Here To Connect</button>
@@ -73,7 +73,7 @@
 
             <div class="form-box">
                 <h4>Enter Your Mpesa Message</h4>
-                <form>
+                <form id="mpesaMessageForm">
                     <div class="form-group"><label>Mpesa Message</label><textarea class="form-control" placeholder="Paste your full Mpesa confirmation message here..." required></textarea></div>
                     <button type="submit" class="btn btn-primary">Submit Mpesa Message</button>
                 </form>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="payment-modal__actions">
                     <button type="button" class="btn btn-secondary" id="cancelPaymentBtn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Send STK Push</button>
+                    <button type="submit" class="btn btn-primary">CONNECT</button>
                 </div>
             </form>
         </div>
@@ -135,6 +135,8 @@
         const paymentPhoneForm = document.getElementById("paymentPhoneForm");
         const paymentPhoneInput = document.getElementById("paymentPhoneInput");
         const cancelPaymentBtn = document.getElementById("cancelPaymentBtn");
+        const activePackageForm = document.getElementById("activePackageForm");
+        const mpesaMessageForm = document.getElementById("mpesaMessageForm");
         let selectedPlan = null;
 
         function formatPlanId(planName) {
@@ -181,6 +183,12 @@
             }
 
             paymentStatusText.textContent = "Still waiting for payment confirmation. If already paid, try again in a moment.";
+        }
+
+        function parseReceiptCode(messageText) {
+            const text = String(messageText || "").toUpperCase();
+            const match = text.match(/\b[A-Z0-9]{10,12}\b/);
+            return match ? match[0] : null;
         }
 
         function openPaymentModal(planCard) {
@@ -267,6 +275,82 @@
         window.addEventListener("keydown", (event) => {
             if (event.key === "Escape" && paymentModal.classList.contains("show")) {
                 closePaymentModal();
+            }
+        });
+
+        activePackageForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const identifier = activePackageForm.querySelector("input[type='text']")?.value?.trim();
+            if (!identifier) return;
+
+            const normalizedPhone = normalizePhone(identifier);
+            if (!normalizedPhone) {
+                paymentStatusText.textContent = "Enter a valid phone number in 07XXXXXXXX format to check payment.";
+                return;
+            }
+
+            paymentStatusText.textContent = "Checking your latest payment status...";
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/mpesa/status/by-phone/${normalizedPhone}`);
+                const result = await response.json();
+
+                if (!response.ok || !result.ok) {
+                    paymentStatusText.textContent = result.message || "No payment found for this phone.";
+                    return;
+                }
+
+                const payment = result.payment;
+                if (payment.status === "SUCCESS") {
+                    paymentStatusText.textContent = `Active package found. Receipt: ${payment.mpesaReceiptNumber || "N/A"}.`;
+                    return;
+                }
+
+                if (payment.status === "PENDING") {
+                    paymentStatusText.textContent = "Your payment is still pending confirmation.";
+                    return;
+                }
+
+                paymentStatusText.textContent = `Latest payment status: ${payment.status}. ${payment.resultDesc || ""}`.trim();
+            } catch (_error) {
+                paymentStatusText.textContent = "Could not check payment status. Ensure backend is running.";
+            }
+        });
+
+        mpesaMessageForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const messageText = mpesaMessageForm.querySelector("textarea")?.value?.trim();
+            if (!messageText) return;
+
+            const receipt = parseReceiptCode(messageText);
+            if (!receipt) {
+                paymentStatusText.textContent = "No valid M-Pesa receipt code found in that message.";
+                return;
+            }
+
+            paymentStatusText.textContent = `Checking payment for receipt ${receipt}...`;
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/mpesa/status/by-receipt/${receipt}`);
+                const result = await response.json();
+
+                if (!response.ok || !result.ok) {
+                    paymentStatusText.textContent = result.message || "No payment found for this receipt.";
+                    return;
+                }
+
+                const payment = result.payment;
+                if (payment.status === "SUCCESS") {
+                    paymentStatusText.textContent = `Receipt verified. Payment successful for KES ${payment.amount}.`;
+                    return;
+                }
+
+                if (payment.status === "PENDING") {
+                    paymentStatusText.textContent = "Payment exists but is still pending callback confirmation.";
+                    return;
+                }
+
+                paymentStatusText.textContent = `Receipt found but payment failed: ${payment.resultDesc || "Request not completed."}`;
+            } catch (_error) {
+                paymentStatusText.textContent = "Could not verify receipt right now. Check backend connection.";
             }
         });
 

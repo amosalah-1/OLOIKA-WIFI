@@ -32,6 +32,8 @@ Server base URL: `http://localhost:5000`
 - `POST /api/mpesa/stkpush`
 - `POST /api/mpesa/callback`
 - `GET /api/mpesa/status/:checkoutRequestId`
+- `GET /api/mpesa/status/by-receipt/:receipt`
+- `GET /api/mpesa/status/by-phone/:phone`
 
 ## STK Push request body
 

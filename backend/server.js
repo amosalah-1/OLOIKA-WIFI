@@ -22,6 +22,8 @@ const baseUrl =
     : "https://sandbox.safaricom.co.ke";
 
 const paymentStore = new Map();
+const receiptIndex = new Map();
+const phoneIndex = new Map();
 
 function normalizeKenyanPhone(rawPhone) {
   const value = String(rawPhone || "").replace(/\D/g, "");
@@ -87,6 +89,18 @@ function extractCallbackMetadata(callbackItemList = []) {
   }
 
   return result;
+}
+
+function savePayment(checkoutRequestId, payload) {
+  paymentStore.set(checkoutRequestId, payload);
+
+  if (payload.mpesaReceiptNumber) {
+    receiptIndex.set(String(payload.mpesaReceiptNumber).toUpperCase(), checkoutRequestId);
+  }
+
+  if (payload.phone) {
+    phoneIndex.set(String(payload.phone), checkoutRequestId);
+  }
 }
 
 const corsOrigins = process.env.ALLOWED_ORIGINS
@@ -181,7 +195,7 @@ app.post("/api/mpesa/stkpush", async (req, res) => {
     const checkoutRequestId = data.CheckoutRequestID;
 
     if (checkoutRequestId) {
-      paymentStore.set(checkoutRequestId, {
+      savePayment(checkoutRequestId, {
         status: "PENDING",
         initiatedAt: new Date().toISOString(),
         phone: normalizedPhone,
@@ -226,7 +240,7 @@ app.post("/api/mpesa/callback", (req, res) => {
     const isSuccess = resultCode === 0;
 
     if (checkoutRequestId) {
-      paymentStore.set(checkoutRequestId, {
+      savePayment(checkoutRequestId, {
         ...(existing || {}),
         status: isSuccess ? "SUCCESS" : "FAILED",
         callbackAt: new Date().toISOString(),
@@ -255,6 +269,64 @@ app.get("/api/mpesa/status/:checkoutRequestId", (req, res) => {
     return res.status(404).json({
       ok: false,
       message: "Transaction not found. It may still be pending callback.",
+    });
+  }
+
+  return res.json({
+    ok: true,
+    checkoutRequestId,
+    payment,
+  });
+});
+
+app.get("/api/mpesa/status/by-receipt/:receipt", (req, res) => {
+  const receipt = String(req.params.receipt || "").trim().toUpperCase();
+  const checkoutRequestId = receiptIndex.get(receipt);
+
+  if (!checkoutRequestId) {
+    return res.status(404).json({
+      ok: false,
+      message: "No transaction found for this receipt.",
+    });
+  }
+
+  const payment = paymentStore.get(checkoutRequestId);
+  if (!payment) {
+    return res.status(404).json({
+      ok: false,
+      message: "Transaction index exists but payment details are missing.",
+    });
+  }
+
+  return res.json({
+    ok: true,
+    checkoutRequestId,
+    payment,
+  });
+});
+
+app.get("/api/mpesa/status/by-phone/:phone", (req, res) => {
+  const normalizedPhone = normalizeKenyanPhone(req.params.phone);
+  if (!normalizedPhone) {
+    return res.status(400).json({
+      ok: false,
+      message: "Invalid phone number format.",
+    });
+  }
+
+  const checkoutRequestId = phoneIndex.get(normalizedPhone);
+  if (!checkoutRequestId) {
+    return res.status(404).json({
+      ok: false,
+      message: "No transaction found for this phone.",
+    });
+  }
+
+  const payment = paymentStore.get(checkoutRequestId);
+  if (!payment) {
+    return res.status(404).json({
+      ok: false,
+      message: "Transaction index exists but payment details are missing.",
     });
   }
 
